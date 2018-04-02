@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">Macys Scanner</string>
+    <string name="start_scan">Start Scan</string>
+    <string name="stop_scan">Stop Scan</string>
+    <string name="largest_title">Ten Largest Files</string>
+    <string name="average_title">Average File Size</string>
+    <string name="frequent_title">Top Five Extensions</string>
+</resources>

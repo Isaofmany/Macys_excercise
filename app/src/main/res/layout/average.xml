@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <data>
+        <variable
+            name="item"
+            type="com.randyr.macysscanner.mvvm.ViewModel" />
+    </data>
+
+    <com.randyr.macysscanner.ui.ItemView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/colorPrimary"
+        android:paddingBottom="1dp">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@android:color/black"
+                android:gravity="center">
+
+                <ProgressBar
+                    android:id="@+id/summary_progress_bar"
+                    android:layout_width="55dp"
+                    android:layout_height="55dp"
+                    android:progressDrawable="@drawable/loading_spinner"
+                    android:visibility="@{item.load}" />
+            </RelativeLayout>
+
+            <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="#7e000000"
+                android:elevation="40dp">
+
+                <TextView
+                    android:id="@+id/average_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentTop="true"
+                    android:background="@android:color/black"
+                    android:text="@string/average_title"
+                    android:textColor="@android:color/white"
+                    android:textSize="@dimen/txt_20" />
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_below="@id/average_title"
+                    android:gravity="center"
+                    android:padding="3dp">
+
+                    <TextView
+                        android:id="@+id/frag_average_avg"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:textColor="@android:color/white"
+                        android:textSize="@dimen/txt_26" />
+                </RelativeLayout>
+            </RelativeLayout>
+        </RelativeLayout>
+    </com.randyr.macysscanner.ui.ItemView>
+</layout>
