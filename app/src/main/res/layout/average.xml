@@ -16,19 +16,11 @@
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">
-
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:background="@android:color/black"
                 android:gravity="center">
-
-                <ProgressBar
-                    android:id="@+id/summary_progress_bar"
-                    android:layout_width="55dp"
-                    android:layout_height="55dp"
-                    android:progressDrawable="@drawable/loading_spinner"
-                    android:visibility="@{item.load}" />
             </RelativeLayout>
 
             <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
@@ -54,13 +46,14 @@
                     android:layout_below="@id/average_title"
                     android:gravity="center"
                     android:padding="3dp">
-
                     <TextView
                         android:id="@+id/frag_average_avg"
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent"
+                        android:layout_height="wrap_content"
+                        android:padding="@dimen/dim_10"
                         android:textColor="@android:color/white"
-                        android:textSize="@dimen/txt_26" />
+                        android:textSize="@dimen/txt_26"
+                        android:text="@{item.text}"/>
                 </RelativeLayout>
             </RelativeLayout>
         </RelativeLayout>

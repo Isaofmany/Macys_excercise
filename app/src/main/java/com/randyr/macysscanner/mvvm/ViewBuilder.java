@@ -16,10 +16,11 @@ import java.util.ArrayList;
 /**
  * Created by Isa on 9/16/16.
  */
-public class FragmentBuilder {
+public class ViewBuilder {
 
-    public static View build(Context context, String type, ArrayList<String> data, String text, View view) {
+    public static View build(Context context, String type, ArrayList<String> data, String text) {
 
+        View view;
         switch (type) {
             case MainActivity.DATALRG:
                 view = LayoutInflater.from(context).inflate(R.layout.largest, null);
@@ -35,7 +36,7 @@ public class FragmentBuilder {
                 return view;
             case MainActivity.DATAFREQ:
                 view = LayoutInflater.from(context).inflate(R.layout.average, null);
-                viewModel = new ViewModel(context, null, null, view.findViewById(R.id.root));
+                viewModel = new ViewModel(context, data, null, view.findViewById(R.id.root));
                 FrequentBinding fragFrequentBinding = FrequentBinding.bind(view);
                 fragFrequentBinding.setItem(viewModel);
                 return view;

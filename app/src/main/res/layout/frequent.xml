@@ -16,12 +16,6 @@
             android:layout_height="match_parent"
             android:gravity="center"
             android:background="@android:color/black">
-            <ProgressBar
-                android:id="@+id/summary_progress_bar"
-                android:layout_width="55dp"
-                android:layout_height="55dp"
-                android:progressDrawable="@drawable/loading_spinner"
-                android:visibility="@{item.load}"/>
         </RelativeLayout>
 
         <RelativeLayout
@@ -43,7 +37,7 @@
                 android:layout_height="match_parent"
                 android:layout_below="@id/frequent_title">
                 <ListView
-                    android:id="@+id/frag_freq_list"
+                    android:id="@+id/list"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent">
                 </ListView>

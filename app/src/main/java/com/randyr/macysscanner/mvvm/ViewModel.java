@@ -34,20 +34,9 @@ public class ViewModel extends BaseObservable {
     }
 
     public void build() {
-
         if(model.getData() != null) {
             MAdapter adapter = new MAdapter(context, model.getData());
-            ((ListView) model.getView().findViewById(R.id.progress)).setAdapter(adapter);
-        }
-    }
-
-    @Bindable
-    public int getLoad() {
-        if(model.getView().findViewById(R.id.loading_layout).getVisibility() == View.VISIBLE) {
-            return View.GONE;
-        }
-        else {
-            return  View.VISIBLE;
+            ((ListView) model.getView().findViewById(R.id.list)).setAdapter(adapter);
         }
     }
 

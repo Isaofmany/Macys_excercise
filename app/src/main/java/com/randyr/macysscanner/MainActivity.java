@@ -1,18 +1,33 @@
 package com.randyr.macysscanner;
 
 import android.Manifest;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.os.Build;
+import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import com.randyr.macysscanner.mvvm.ViewBuilder;
+import com.randyr.macysscanner.mvvm.ViewModel;
+import com.randyr.macysscanner.scannerTools.PermitChecker;
 import com.randyr.macysscanner.scannerTools.ScannerHandler;
+import com.randyr.macysscanner.scannerTools.ScannerService;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
+
+    private String[] perms;
+
     public static final String PURPOSE = "purpose";
     public static final String DATALRG = "largest_files";
     public static final String DATAAVG = "average_size";
@@ -25,14 +40,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private TextView startScan, stopScan;
 
     @Override
-    protected void onResume() {
-        super.onResume();
-    }
-
-    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        registerReceiver(receiver, new IntentFilter(MainActivity.class.getSimpleName()));
+    }
+
+
+    @Override
+    protected void onStart() {
+        super.onStart();
 
         try {
             resultsBund = getIntent().getExtras();
@@ -41,15 +58,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             Log.d("Main", "Error 1");
         }
 
+        PackageInfo pmg = null;
+        try {
+            pmg = getPackageManager().getPackageInfo(getPackageName(), PackageManager.GET_PERMISSIONS);
 
-        int pc0 = ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE);
-
-        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.M && pc0 != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 0);
+            if((perms = PermitChecker.checkPermit(this, pmg.requestedPermissions, true)) == null) {
+                initUi();
+                initData();
+            }
         }
-
-        initUi();
-        initData();
+        catch (PackageManager.NameNotFoundException e) {
+            //Error to handle
+        }
     }
 
     @Override
@@ -106,19 +126,34 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         stopScan = (TextView) findViewById(R.id.main_footer_stop);
         startScan.setOnClickListener(this);
         stopScan.setOnClickListener(this);
+    }
 
-        if (dataDropped) {
-            //Make Visible
+    private void initViews(Intent intent) {
+
+        if(intent.hasExtra(ScannerService.PURPOSERES)) {
+            Bundle extras = intent.getBundleExtra(ScannerService.PURPOSERES);
+
+            if(extras.containsKey(DATALRG)) {
+                ((LinearLayout) findViewById(R.id.card_0)).
+                        addView(ViewBuilder.build(this, DATALRG, extras.getStringArrayList(DATALRG),null));
+            }
+
+            if(extras.containsKey(DATAAVG)) {
+                ((LinearLayout) findViewById(R.id.card_0)).
+                        addView(ViewBuilder.build(this, DATAAVG, null, String.valueOf(extras.getFloat(DATAAVG))));
+            }
+
+            if(extras.containsKey(DATAFREQ)) {
+                ((LinearLayout) findViewById(R.id.card_0)).
+                        addView(ViewBuilder.build(this, DATAAVG, extras.getStringArrayList(DATAAVG),null));
+            }
         }
-        startScan = (TextView) findViewById(R.id.main_footer_start);
-        stopScan = (TextView) findViewById(R.id.main_footer_stop);
     }
 
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.main_footer_start:
-
                 if (!scanPressed) {
                     scannerHandler.beginScan();
                     scanPressed = true;
@@ -144,6 +179,22 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public interface Comm {
         void dataDrop(Bundle drop);
     }
+
+
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        initUi();
+        initData();
+    }
+
+    BroadcastReceiver receiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            initViews(intent);
+        }
+    };
 }
 
 

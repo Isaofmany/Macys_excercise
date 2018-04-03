@@ -47,10 +47,10 @@ public class Loading /**extends Fragment **/ {
         return view;
     }
 
-    private void initUi() {
-        progressBar = (ProgressBar) view.findViewById(R.id.summary_progress_bar);
-        beginAnim();
-    }
+//    private void initUi() {
+//        progressBar = (ProgressBar) view.findViewById(R.id.summary_progress_bar);
+//        beginAnim();
+//    }
 
     public void setProg(int prog) {
         this.prog = prog;

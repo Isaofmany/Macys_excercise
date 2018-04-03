@@ -3,19 +3,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@android:color/black">
-
-    <RelativeLayout
-        android:id="@+id/loading_layout"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:gravity="center"
-        android:background="@android:color/black">
-        <ProgressBar
-            android:id="@+id/progress"
-            android:layout_width="55dp"
-            android:layout_height="55dp"
-            android:progressDrawable="@drawable/loading_spinner"/>
-    </RelativeLayout>
     
     <RelativeLayout
         android:id="@+id/main_header"
@@ -35,38 +22,50 @@
         android:layout_below="@id/main_header"
         android:layout_above="@+id/main_footer"
         android:background="@drawable/macys_building">
-        <TextView
-            android:id="@+id/main_progress_ind"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:gravity="center"
-            android:textColor="@android:color/white"
-            android:textSize="@dimen/txt_100"
-            android:text="0"
-            android:visibility="gone"/>
         <LinearLayout
             android:id="@+id/main_body_card_holder"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center">
+            android:layout_height="match_parent"
+            android:orientation="vertical">
             <LinearLayout
                 android:id="@+id/card_0"
                 android:orientation="vertical"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_weight="1"/>
+                android:paddingLeft="@dimen/dim_10"
+                android:layout_weight="1"
+                android:gravity="center|left">
+                <ProgressBar
+                    android:layout_width="55dp"
+                    android:layout_height="55dp"
+                    android:progressDrawable="@drawable/loading_spinner"/>
+            </LinearLayout>
             <LinearLayout
                 android:id="@+id/card_1"
                 android:orientation="vertical"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_weight="1"/>
+                android:paddingLeft="@dimen/dim_10"
+                android:layout_weight="1"
+                android:gravity="center|left">
+                <ProgressBar
+                    android:layout_width="55dp"
+                    android:layout_height="55dp"
+                    android:progressDrawable="@drawable/loading_spinner"/>
+            </LinearLayout>
             <LinearLayout
                 android:id="@+id/card_2"
                 android:orientation="vertical"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_weight="1"/>
+                android:paddingLeft="@dimen/dim_10"
+                android:layout_weight="1"
+                android:gravity="center|left">
+                <ProgressBar
+                    android:layout_width="55dp"
+                    android:layout_height="55dp"
+                    android:progressDrawable="@drawable/loading_spinner"/>
+            </LinearLayout>
         </LinearLayout>
     </RelativeLayout>
 

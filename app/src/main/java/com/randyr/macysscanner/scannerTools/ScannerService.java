@@ -1,5 +1,6 @@
 package com.randyr.macysscanner.scannerTools;
 
+import android.app.ActivityManager;
 import android.app.IntentService;
 import android.app.Notification;
 import android.app.PendingIntent;
@@ -21,6 +22,7 @@ import com.randyr.macysscanner.R;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 /**
  * Created by Isa on 9/8/16.
@@ -33,8 +35,8 @@ public class ScannerService extends IntentService {
 
     private String NOTIFTITLE = "Scan Complete";
     private String NOTIFMSG = "Click to Check Results Now";
-    public static String INTPURPOSE = "purpose";
-    public static String PURPOSERES = "push_results";
+    public static final String INTPURPOSE = "purpose";
+    public static final String PURPOSERES = "push_results";
 
     private ArrayList<String> mFilesType;
     private ArrayList<String> filesCache, mFilesSized;
@@ -50,7 +52,7 @@ public class ScannerService extends IntentService {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
 
-        if(Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState()) ||
+        if (Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState()) ||
                 (Environment.MEDIA_MOUNTED_READ_ONLY.equals(Environment.getExternalStorageState()))) {
             scanAndBuild();
         }
@@ -73,42 +75,43 @@ public class ScannerService extends IntentService {
 
     private void scanAndBuild() {
 
-        File file = new File(EXTDIR);
-        filesCache = buildData(file.listFiles());
+        filesCache = buildData(null, true);
         mFilesSized = orderBySize(new ArrayList(filesCache));
         orderByType(new ArrayList(filesCache));
 
         getDataDrop();
-//        stopSelf();
     }
 
-    private ArrayList<String> buildData(File[] dir) {
+    private ArrayList<String> buildData(File[] dir, boolean init) {
+
+        File file;
+        File[] list = null;
         ArrayList<String> files = new ArrayList<>();
-//
-//        if (dir == null) {
-//            return new ArrayList<>();
-//        }
-//
-//        for (File file : dir) {
-//            if (file.isDirectory()) {
-//                files.addAll(buildData(file.listFiles()));
-//            } else {
-//                files.add(file.getAbsolutePath());
-//            }
-//        }
         ArrayList<String> filesList = new ArrayList<String>();
-        String sd_card = Environment.getExternalStorageDirectory().toString();
-        File file = new File( sd_card ) ;
-        File list[] = file.listFiles();
-        for( int i=0; i< list.length; i++) {
-            filesList.add( list[i].getName() );
+
+        if (init) {
+            String sd_card = Environment.getExternalStorageDirectory().getAbsolutePath();
+            file = new File(sd_card);
+            list = file.listFiles();
+
+            for (int i = 0; i < list.length; i++) {
+                filesList.add(list[i].getName());
+            }
+        } else {
+            for (int i = 0; i < dir.length; i++) {
+                filesList.add(dir[i].getName());
+            }
         }
 
-        for (File temp : list) {
-            if (temp.isDirectory()) {
-                files.addAll(buildData(temp.listFiles()));
-            } else {
-                files.add(temp.getAbsolutePath());
+        files.addAll(filesList);
+
+        if(list != null) {
+            for (File temp : list) {
+                if (temp.isDirectory()) {
+                    files.addAll(buildData(temp.listFiles(), false));
+                } else {
+                    files.add(temp.getAbsolutePath());
+                }
             }
         }
         return files;
@@ -142,7 +145,7 @@ public class ScannerService extends IntentService {
 
         File file;
 
-        if(newList.size() > 0) {
+        if (newList.size() > 0) {
             for (int x = 0; x < 10; x++) {
                 file = newList.get(x);
                 ordered.add(file.getName() + " length = " + String.valueOf(file.length()));
@@ -199,23 +202,36 @@ public class ScannerService extends IntentService {
     }
 
     protected void getDataDrop() {
-        Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-        intent.putExtra(INTPURPOSE, PURPOSERES);
-        intent.putExtra(PURPOSERES, bundleData());
-        PendingIntent pendInt = PendingIntent.getActivity(getApplicationContext(), 0, intent, PendingIntent.FLAG_CANCEL_CURRENT);
-        Notification mNotif = new Notification();
-        notif = new Notification.Builder(getApplicationContext()).setSmallIcon(R.drawable.notifcation_icon).
-                setContentTitle(NOTIFTITLE).setContentText(NOTIFTITLE).setContentIntent(pendInt);
+        Intent intent;
+        ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
+        List<ActivityManager.RunningAppProcessInfo> services = manager.getRunningAppProcesses();
+        boolean visible = services.get(0).processName.equalsIgnoreCase(getPackageName());
 
-        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.JELLY_BEAN) {
-            mNotif = notif.getNotification();
-            synchronized (mNotif) {
-                mNotif.notify();
-            }
-        } else {
-            mNotif = notif.build();
-            synchronized (mNotif) {
-                mNotif.notify();
+        if(visible) {
+            intent = new Intent(MainActivity.class.getSimpleName());
+            intent.putExtra(INTPURPOSE, PURPOSERES);
+            intent.putExtra(PURPOSERES, bundleData());
+            getApplicationContext().sendBroadcast(intent);
+        }
+        else {
+            intent = new Intent(getApplicationContext(), MainActivity.class);
+            intent.putExtra(INTPURPOSE, PURPOSERES);
+            intent.putExtra(PURPOSERES, bundleData());
+            PendingIntent pendInt = PendingIntent.getActivity(getApplicationContext(), 0, intent, PendingIntent.FLAG_CANCEL_CURRENT);
+            Notification mNotif = new Notification();
+            notif = new Notification.Builder(getApplicationContext()).setSmallIcon(R.drawable.notifcation_icon).
+                    setContentTitle(NOTIFTITLE).setContentText(NOTIFTITLE).setContentIntent(pendInt);
+
+            if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.JELLY_BEAN) {
+                mNotif = notif.getNotification();
+                synchronized (mNotif) {
+                    mNotif.notify();
+                }
+            } else {
+                mNotif = notif.build();
+                synchronized (mNotif) {
+                    mNotif.notify();
+                }
             }
         }
     }
@@ -223,7 +239,6 @@ public class ScannerService extends IntentService {
     private Bundle bundleData() {
         Bundle bundle = new Bundle();
         try {
-
             bundle.putStringArrayList(MainActivity.DATALRG, mFilesSized);
             bundle.putFloat(MainActivity.DATAAVG, getAverage());
             bundle.putStringArrayList(MainActivity.DATAFREQ, getTopFive());
@@ -239,7 +254,7 @@ public class ScannerService extends IntentService {
         float avg = 0;
 
         ArrayList<File> files = new ArrayList<>();
-        filesCache = buildData(getApplicationContext().getFilesDir().listFiles());
+        filesCache = buildData(getApplicationContext().getFilesDir().listFiles(), true);
 
         for (String str : filesCache) {
             files.add(new File(str));
