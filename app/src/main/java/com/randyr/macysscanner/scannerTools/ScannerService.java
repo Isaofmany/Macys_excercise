@@ -221,7 +221,7 @@ public class ScannerService extends IntentService {
             PendingIntent pendInt = PendingIntent.getActivity(getApplicationContext(), 0, intent, PendingIntent.FLAG_CANCEL_CURRENT);
             notif = new Notification.Builder(getApplicationContext()).setSmallIcon(R.drawable.notifcation_icon).
                     setContentTitle(NOTIFTITLE).setContentText(NOTIFTITLE).setContentIntent(pendInt);
-//            notif.build();
+//            manager.notify(0, notif.build());
         }
     }
 
