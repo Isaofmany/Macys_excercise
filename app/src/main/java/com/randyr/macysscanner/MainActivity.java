@@ -16,6 +16,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.randyr.macysscanner.mvvm.ViewBuilder;
@@ -46,6 +47,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         registerReceiver(receiver, new IntentFilter(MainActivity.class.getSimpleName()));
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        MacysApplication.setVisible(false);
+    }
 
     @Override
     protected void onStart() {
@@ -80,13 +86,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     @Override
-    protected void onStop() {
-        super.onStop();
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
+    protected void onPause() {
+        super.onPause();
+        MacysApplication.setVisible(false);
     }
 
     private void initData() {
@@ -134,20 +136,24 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             Bundle extras = intent.getBundleExtra(ScannerService.PURPOSERES);
 
             if(extras.containsKey(DATALRG)) {
-                ((LinearLayout) findViewById(R.id.card_0)).
+                ((RelativeLayout) findViewById(R.id.card_0)).getChildAt(0).setVisibility(View.GONE);
+                ((RelativeLayout) findViewById(R.id.card_0)).
                         addView(ViewBuilder.build(this, DATALRG, extras.getStringArrayList(DATALRG),null));
             }
 
             if(extras.containsKey(DATAAVG)) {
-                ((LinearLayout) findViewById(R.id.card_0)).
+                ((RelativeLayout) findViewById(R.id.card_1)).getChildAt(0).setVisibility(View.GONE);
+                ((RelativeLayout) findViewById(R.id.card_1)).
                         addView(ViewBuilder.build(this, DATAAVG, null, String.valueOf(extras.getFloat(DATAAVG))));
             }
 
             if(extras.containsKey(DATAFREQ)) {
-                ((LinearLayout) findViewById(R.id.card_0)).
-                        addView(ViewBuilder.build(this, DATAAVG, extras.getStringArrayList(DATAAVG),null));
+                ((RelativeLayout) findViewById(R.id.card_2)).getChildAt(0).setVisibility(View.GONE);
+                ((RelativeLayout) findViewById(R.id.card_2)).
+                        addView(ViewBuilder.build(this, DATAFREQ, extras.getStringArrayList(DATAFREQ),null));
             }
         }
+        scanPressed = false;
     }
 
     @Override
@@ -155,8 +161,21 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         switch (view.getId()) {
             case R.id.main_footer_start:
                 if (!scanPressed) {
-                    scannerHandler.beginScan();
+                    ((RelativeLayout) findViewById(R.id.card_0)).getChildAt(0).setVisibility(View.VISIBLE);
+                    ((RelativeLayout) findViewById(R.id.card_1)).getChildAt(0).setVisibility(View.VISIBLE);
+                    ((RelativeLayout) findViewById(R.id.card_2)).getChildAt(0).setVisibility(View.VISIBLE);
                     scanPressed = true;
+                    Thread loadDelay = new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            try {
+                                Thread.sleep(3000);
+                                scannerHandler.beginScan();
+                            } catch (InterruptedException e) {
+                            }
+                        }
+                    });
+                    loadDelay.start();
                 }
                 if (dataDropped) {
                     dataDropped = false;

@@ -25,6 +25,7 @@ public class ViewBuilder {
             case MainActivity.DATALRG:
                 view = LayoutInflater.from(context).inflate(R.layout.largest, null);
                 ViewModel viewModel = new ViewModel(context, data, null, view.findViewById(R.id.root));
+                viewModel.build();
                 LargestBinding largestBinding = LargestBinding.bind(view);
                 largestBinding.setItem(viewModel);
                 return view;
@@ -35,8 +36,9 @@ public class ViewBuilder {
                 fragAverageBinding.setItem(viewModel);
                 return view;
             case MainActivity.DATAFREQ:
-                view = LayoutInflater.from(context).inflate(R.layout.average, null);
+                view = LayoutInflater.from(context).inflate(R.layout.frequent, null);
                 viewModel = new ViewModel(context, data, null, view.findViewById(R.id.root));
+                viewModel.build();
                 FrequentBinding fragFrequentBinding = FrequentBinding.bind(view);
                 fragFrequentBinding.setItem(viewModel);
                 return view;

@@ -14,8 +14,10 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.os.Looper;
 import android.support.annotation.Nullable;
+import android.support.v4.app.NotificationManagerCompat;
 import android.util.Log;
 
+import com.randyr.macysscanner.MacysApplication;
 import com.randyr.macysscanner.MainActivity;
 import com.randyr.macysscanner.R;
 
@@ -202,12 +204,11 @@ public class ScannerService extends IntentService {
     }
 
     protected void getDataDrop() {
-        Intent intent;
-        ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
-        List<ActivityManager.RunningAppProcessInfo> services = manager.getRunningAppProcesses();
-        boolean visible = services.get(0).processName.equalsIgnoreCase(getPackageName());
 
-        if(visible) {
+        Intent intent;
+        NotificationManagerCompat manager = NotificationManagerCompat.from(getApplicationContext());
+
+        if(MacysApplication.isVisible()) {
             intent = new Intent(MainActivity.class.getSimpleName());
             intent.putExtra(INTPURPOSE, PURPOSERES);
             intent.putExtra(PURPOSERES, bundleData());
@@ -218,21 +219,9 @@ public class ScannerService extends IntentService {
             intent.putExtra(INTPURPOSE, PURPOSERES);
             intent.putExtra(PURPOSERES, bundleData());
             PendingIntent pendInt = PendingIntent.getActivity(getApplicationContext(), 0, intent, PendingIntent.FLAG_CANCEL_CURRENT);
-            Notification mNotif = new Notification();
             notif = new Notification.Builder(getApplicationContext()).setSmallIcon(R.drawable.notifcation_icon).
                     setContentTitle(NOTIFTITLE).setContentText(NOTIFTITLE).setContentIntent(pendInt);
-
-            if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.JELLY_BEAN) {
-                mNotif = notif.getNotification();
-                synchronized (mNotif) {
-                    mNotif.notify();
-                }
-            } else {
-                mNotif = notif.build();
-                synchronized (mNotif) {
-                    mNotif.notify();
-                }
-            }
+//            notif.build();
         }
     }
 
@@ -272,7 +261,6 @@ public class ScannerService extends IntentService {
         oldList.addAll(mFilesType);
         String current;
         trk = 0;
-
 
         while (topFive.size() != 5) {
             current = oldList.get(0);

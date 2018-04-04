@@ -8,19 +8,12 @@
     </data>
 
     <RelativeLayout
+        android:id="@+id/root"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
+        android:layout_height="wrap_content">
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:gravity="center"
-            android:background="@android:color/black">
-        </RelativeLayout>
-
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:background="#7e000000"
             android:elevation="40dp">
             <TextView
@@ -28,18 +21,20 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_alignParentTop="true"
+                android:padding="@dimen/dim_10"
                 android:textSize="@dimen/txt_20"
                 android:textColor="@android:color/white"
-                android:text="@string/largest_title"
+                android:text="@string/frequent_title"
                 android:background="@android:color/black"/>
             <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_below="@id/frequent_title">
                 <ListView
                     android:id="@+id/list"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent">
+                    android:layout_height="wrap_content"
+                    android:padding="@dimen/dim_10">
                 </ListView>
             </RelativeLayout>
         </RelativeLayout>

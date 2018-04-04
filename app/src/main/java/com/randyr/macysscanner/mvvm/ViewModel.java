@@ -22,11 +22,10 @@ import java.util.Observable;
  * Created by Isa on 3/28/18.
  */
 
-public class ViewModel extends BaseObservable {
+public class ViewModel extends BaseObservable implements View.OnClickListener {
 
     private Context context ;
     private Model model;
-    private int position;
 
     public ViewModel(Context context, ArrayList<String> data, String text, View view) {
         this.context = context;
@@ -52,12 +51,13 @@ public class ViewModel extends BaseObservable {
 
         public MAdapter(@NonNull Context context, ArrayList<String> data) {
             super(context, 0, data);
+            this.context = context;
             this.data = data;
         }
 
         @Override
         public int getCount() {
-            return super.getCount();
+            return data.size();
         }
 
         @NonNull
@@ -65,11 +65,16 @@ public class ViewModel extends BaseObservable {
         public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
 
             if(convertView == null) {
-                convertView = LayoutInflater.from(context).inflate(android.R.layout.simple_list_item_1, null);
+                convertView = LayoutInflater.from(context).inflate(R.layout.list_item, null);
                 convertView.setTag(position);
             }
-            ((TextView) convertView.findViewById(android.R.id.text1)).setText(model.getData().get(position));
+            ((TextView) convertView.findViewById(R.id.text)).setText(model.getData().get(position));
             return convertView;
         }
+    }
+
+    @Override
+    public void onClick(View v) {
+
     }
 }
